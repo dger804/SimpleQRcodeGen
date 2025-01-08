@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Código QR</title>
+</head>
+<body>
+  <h1>Generador de Código QR</h1>
+  <form id="qrForm">
+    <label for="data">Texto o URL:</label>
+    <input type="text" id="data" name="data" required>
+    <label for="margin">Margen:</label>
+    <input type="float" id="margin" name="margin" value="20">
+    <label for="size">Tamaño:</label>
+    <input type="number" id="size" name="size" value="300">
+    <label for="color">Color del código:</label>
+    <input type="color" id="color" name="color" value="#000000">
+    <label for="bgColor">Color de fondo:</label>
+    <input type="color" id="bgColor" name="bgColor" value="#ffffff">
+    <label for="format">Formato:</label>
+    <select id="format" name="format">
+      <option value="png">PNG</option>
+      <option value="svg">SVG</option>
+    </select>
+    <button type="submit">Generar QR</button>
+  </form>
+  <h2>Resultado:</h2>
+  <img id="qrCode" alt="Código QR generado">
+  <script>
+    const form = document.getElementById('qrForm');
+    const qrCodeImg = document.getElementById('qrCode');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const body = {
+        data: data.get('data'),
+        size: parseInt(data.get('size'), 10),
+        color: data.get('color'),
+        bgColor: data.get('bgColor'),
+        format: data.get('format'),
+        margin: parseFloat(data.get('margin'), 10),
+        image: ''
+      };
+
+      try {
+        const response = await fetch('/api/generate-qr', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error generando el código QR');
+        }
+
+        const blob = await response.blob();
+        qrCodeImg.src = URL.createObjectURL(blob);
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  </script>
+</body>
+</html>
