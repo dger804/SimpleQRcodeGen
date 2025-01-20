@@ -55,8 +55,10 @@
           throw new Error('Error generando el código QR');
         }
 
-        const blob = await response.blob();
-        qrCodeImg.src = URL.createObjectURL(blob);
+        /*const blob = await response.blob();
+        qrCodeImg.src = URL.createObjectURL(blob);*/
+        const result = await response.json();
+        qrCodeImg.src = result.image;
       } catch (error) {
         alert(error.message);
       }
