@@ -5,9 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Generador de Código QR</title>
   <style>
-    img[src=""], img:not([src]) {
+    /*img[src=""], img:not([src]) {
+      display: none;
+    }*/
+    #resultado{
       display: none;
     }
+    #qrCode {
+      display: none; /* Oculta la imagen por defecto */
+      max-width: 300px;
+      margin-top: 20px;
+    }
+
   </style>
 </head>
 <body>
@@ -30,11 +39,12 @@
     </select>
     <button type="submit">Generar QR</button>
   </form>
-  <h2>Resultado:</h2>
+  <h2 id="resultado">Resultado:</h2>
   <img id="qrCode" alt="Código QR">
   <script>
     const form = document.getElementById('qrForm');
     const qrCodeImg = document.getElementById('qrCode');
+    const resultText = document.getElementById('resultado');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -64,6 +74,8 @@
         qrCodeImg.src = URL.createObjectURL(blob);*/
         const result = await response.json();
         qrCodeImg.src = result.image;
+        qrCodeImg.style.display = 'block';
+        resultText.style.display = 'block';
       } catch (error) {
         alert(error.message);
       }
