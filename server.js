@@ -22,7 +22,7 @@ app.post('/api/generate-qr', async (req, res) => {
   const { data, size, color, bgColor, format, image, margin } = req.body;
 
   if (!data) {
-    return res.status(400).json({ error: 'El campo "data" es obligatorio.' });
+    return res.status(400).json({ error: 'El campo -data- es obligatorio.' });
   }
 
   const options = {
@@ -62,9 +62,12 @@ app.post('/api/generate-qr', async (req, res) => {
     });
 
     const buffer = await qrCode.getRawData(format || 'png');
+    const base64Image = `data:image/${format || 'png'};base64,${buffer.toString('base64')}`;
 
-    res.setHeader('Content-Type', format === 'svg' ? 'image/svg+xml' : 'image/png');
-    res.send(buffer);
+    res.json({ image: base64Image });
+
+    //res.setHeader('Content-Type', format === 'svg' ? 'image/svg+xml' : 'image/png');
+    //res.send(buffer);
   } catch (error) {
     res.status(500).json({ error: 'Error generando el código QR', details: error.message });
   }
